@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 public class b2hex
@@ -21,15 +22,22 @@ public class b2hex
 		
 		if (args[0].Equals("-hb"))
 		{
-			SoapHexBinary shb = SoapHexBinary.Parse(System.Text.Encoding.Unicode.GetString(file_in, 0, file_in.Length));
+			SoapHexBinary shb = SoapHexBinary.Parse(Encoding.ASCII.GetString(file_in, 0, file_in.Length));
 			file_out.Write(shb.Value, 0, shb.Value.Length);
 		}
 		else
 		{
 			SoapHexBinary shb = new SoapHexBinary(file_in);
-			byte[] bytes = new byte[shb.ToString().Length * sizeof(char)];
+			
+			// Get UTF16 bytes and convert UTF16 bytes to UTF8 bytes
+			byte[] utf16Bytes = Encoding.Unicode.GetBytes(shb.ToString());
+			byte[] utf8Bytes = Encoding.Convert(Encoding.Unicode, Encoding.ASCII, utf16Bytes);
+			byte[] bytes = new byte[shb.ToString().Length];
+			
+			//byte[] bytes = new byte[shb.ToString().Length * sizeof(char)];
 			System.Buffer.BlockCopy(shb.ToString().ToCharArray(), 0, bytes, 0, bytes.Length);
-			file_out.Write(bytes, 0, bytes.Length);
+			//file_out.Write(bytes, 0, bytes.Length);
+			file_out.Write(utf8Bytes, 0, utf8Bytes.Length);
 		}
 		
 		file_out.Close();
