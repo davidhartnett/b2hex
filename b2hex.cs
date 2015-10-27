@@ -29,15 +29,9 @@ public class b2hex
 		{
 			SoapHexBinary shb = new SoapHexBinary(file_in);
 			
-			// Get UTF16 bytes and convert UTF16 bytes to UTF8 bytes
 			byte[] utf16Bytes = Encoding.Unicode.GetBytes(shb.ToString());
-			byte[] utf8Bytes = Encoding.Convert(Encoding.Unicode, Encoding.ASCII, utf16Bytes);
-			byte[] bytes = new byte[shb.ToString().Length];
-			
-			//byte[] bytes = new byte[shb.ToString().Length * sizeof(char)];
-			System.Buffer.BlockCopy(shb.ToString().ToCharArray(), 0, bytes, 0, bytes.Length);
-			//file_out.Write(bytes, 0, bytes.Length);
-			file_out.Write(utf8Bytes, 0, utf8Bytes.Length);
+			byte[] bytes = Encoding.Convert(Encoding.Unicode, Encoding.ASCII, utf16Bytes);
+			file_out.Write(bytes, 0, bytes.Length);
 		}
 		
 		file_out.Close();
